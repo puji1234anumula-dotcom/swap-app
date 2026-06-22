@@ -1,0 +1,34 @@
+2026-06-22 15:30:26.301 IST [14432] LOG:  starting PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit
+2026-06-22 15:30:26.306 IST [14432] LOG:  listening on IPv6 address "::1", port 5432
+2026-06-22 15:30:26.306 IST [14432] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-06-22 15:30:26.385 IST [29184] LOG:  database system was shut down at 2026-06-22 15:30:24 IST
+2026-06-22 15:30:26.405 IST [14432] LOG:  database system is ready to accept connections
+2026-06-22 15:33:16.487 IST [32872] LOG:  starting PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit
+2026-06-22 15:33:16.490 IST [32872] LOG:  could not bind IPv6 address "::1": Permission denied
+2026-06-22 15:33:16.490 IST [32872] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
+2026-06-22 15:33:16.490 IST [32872] WARNING:  could not create listen socket for "localhost"
+2026-06-22 15:33:16.490 IST [32872] FATAL:  could not create any TCP/IP sockets
+2026-06-22 15:33:16.492 IST [32872] LOG:  database system is shut down
+2026-06-22 15:33:48.247 IST [33612] LOG:  starting PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit
+2026-06-22 15:33:48.250 IST [33612] LOG:  could not bind IPv6 address "::1": Permission denied
+2026-06-22 15:33:48.250 IST [33612] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
+2026-06-22 15:33:48.250 IST [33612] WARNING:  could not create listen socket for "localhost"
+2026-06-22 15:33:48.250 IST [33612] FATAL:  could not create any TCP/IP sockets
+2026-06-22 15:33:48.251 IST [33612] LOG:  database system is shut down
+2026-06-22 15:35:41.027 IST [31188] LOG:  starting PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit
+2026-06-22 15:35:41.031 IST [31188] LOG:  could not bind IPv6 address "::1": Permission denied
+2026-06-22 15:35:41.031 IST [31188] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
+2026-06-22 15:35:41.031 IST [31188] WARNING:  could not create listen socket for "localhost"
+2026-06-22 15:35:41.031 IST [31188] FATAL:  could not create any TCP/IP sockets
+2026-06-22 15:35:41.033 IST [31188] LOG:  database system is shut down
+2026-06-22 15:36:13.816 IST [19704] LOG:  starting PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit
+2026-06-22 15:36:13.820 IST [19704] LOG:  could not bind IPv6 address "::1": Permission denied
+2026-06-22 15:36:13.820 IST [19704] LOG:  could not bind IPv4 address "127.0.0.1": Permission denied
+2026-06-22 15:36:13.821 IST [19704] WARNING:  could not create listen socket for "localhost"
+2026-06-22 15:36:13.821 IST [19704] FATAL:  could not create any TCP/IP sockets
+2026-06-22 15:36:13.823 IST [19704] LOG:  database system is shut down
+2026-06-22 15:37:42.508 IST [30960] LOG:  starting PostgreSQL 16.3, compiled by Visual C++ build 1938, 64-bit
+2026-06-22 15:37:42.513 IST [30960] LOG:  listening on IPv6 address "::1", port 5433
+2026-06-22 15:37:42.513 IST [30960] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-06-22 15:37:42.569 IST [28896] LOG:  database system was shut down at 2026-06-22 15:35:38 IST
+2026-06-22 15:37:42.585 IST [30960] LOG:  database system is ready to accept connections

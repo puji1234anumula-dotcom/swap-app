@@ -1,0 +1,14 @@
+﻿backend/.env
+backend/venv/
+backend/pgdata/
+backend/pgsql/
+backend/*.log
+backend/postgres.*.log
+backend/uvicorn.*.log
+
+frontend/node_modules/
+frontend/dist/
+frontend/vite.*.log
+
+__pycache__/
+*.pyc
