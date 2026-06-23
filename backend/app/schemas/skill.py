@@ -1,3 +1,4 @@
+from typing import List, Optional
 from datetime import datetime
 
 from pydantic import BaseModel, Field, field_validator
@@ -5,12 +6,12 @@ from pydantic import BaseModel, Field, field_validator
 
 class SkillPostBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
-    tags: list[str] = Field(..., min_length=1, max_length=20)
-    description: str | None = Field(default=None, max_length=2000)
+    tags: List[str] = Field(..., min_length=1, max_length=20)
+    description: Optional[str] = Field(default=None, max_length=2000)
 
     @field_validator("tags")
     @classmethod
-    def normalize_tags(cls, tags: list[str]) -> list[str]:
+    def normalize_tags(cls, tags: List[str]) -> List[str]:
         normalized = []
         seen = set()
         for tag in tags:
@@ -30,13 +31,13 @@ class SkillPostCreate(SkillPostBase):
 
 
 class SkillPostUpdate(BaseModel):
-    title: str | None = Field(default=None, min_length=1, max_length=200)
-    tags: list[str] | None = Field(default=None, min_length=1, max_length=20)
-    description: str | None = Field(default=None, max_length=2000)
+    title: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    tags: Optional[List[str]] = Field(default=None, min_length=1, max_length=20)
+    description: Optional[str] = Field(default=None, max_length=2000)
 
     @field_validator("tags")
     @classmethod
-    def normalize_tags(cls, tags: list[str] | None) -> list[str] | None:
+    def normalize_tags(cls, tags: Optional[List[str]]) -> Optional[List[str]]:
         if tags is None:
             return None
         return SkillPostBase.normalize_tags(tags)
@@ -46,13 +47,13 @@ class SkillPostResponse(BaseModel):
     id: str
     user_id: str
     title: str
-    tags: list[str]
-    description: str | None
+    tags: List[str]
+    description: Optional[str]
     created_at: datetime
 
 
 class PaginatedSkillPostsResponse(BaseModel):
-    items: list[SkillPostResponse]
+    items: List[SkillPostResponse]
     total: int
     limit: int
     offset: int

@@ -1,3 +1,4 @@
+from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 
@@ -18,8 +19,8 @@ class Want(Base):
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
-    tags: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    tags: Mapped[List[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )

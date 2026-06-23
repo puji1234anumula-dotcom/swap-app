@@ -1,3 +1,4 @@
+from typing import List, Literal
 from datetime import datetime
 from typing import Literal
 
@@ -20,7 +21,7 @@ class MatchResponse(BaseModel):
 
 
 class PaginatedMatchesResponse(BaseModel):
-    matches: list[MatchResponse]
+    matches: List[MatchResponse]
     total: int
     limit: int
     offset: int

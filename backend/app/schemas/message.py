@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime
 
 from pydantic import BaseModel, Field
@@ -16,7 +17,7 @@ class MessageResponse(BaseModel):
 
 
 class PaginatedMessagesResponse(BaseModel):
-    messages: list[MessageResponse]
+    messages: List[MessageResponse]
     total: int
     limit: int
     offset: int

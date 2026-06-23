@@ -1,3 +1,4 @@
+from typing import List, Optional
 from sqlalchemy import and_, exists, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -8,7 +9,7 @@ from app.models.offer import Offer
 from app.models.want import Want
 
 
-async def create_matches_for_offer(db: AsyncSession, offer: Offer) -> list[Match]:
+async def create_matches_for_offer(db: AsyncSession, offer: Offer) -> List[Match]:
     result = await db.execute(
         select(Want).where(
             Want.user_id != offer.user_id,
@@ -21,7 +22,7 @@ async def create_matches_for_offer(db: AsyncSession, offer: Offer) -> list[Match
     return matches
 
 
-async def create_matches_for_want(db: AsyncSession, want: Want) -> list[Match]:
+async def create_matches_for_want(db: AsyncSession, want: Want) -> List[Match]:
     result = await db.execute(
         select(Offer).where(
             Offer.user_id != want.user_id,
@@ -81,7 +82,7 @@ async def _mark_reverse_matches_mutual(db: AsyncSession, offer: Offer, want: Wan
         reverse_match.mutual = True
 
 
-async def get_user_match(db: AsyncSession, match_id, user_id) -> Match | None:
+async def get_user_match(db: AsyncSession, match_id, user_id) -> Optional[Match]:
     result = await db.execute(
         select(Match)
         .options(selectinload(Match.offer), selectinload(Match.want))

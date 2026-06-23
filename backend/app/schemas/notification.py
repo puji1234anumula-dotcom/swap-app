@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime
 
 from pydantic import BaseModel
@@ -12,7 +13,7 @@ class NotificationResponse(BaseModel):
 
 
 class PaginatedNotificationsResponse(BaseModel):
-    notifications: list[NotificationResponse]
+    notifications: List[NotificationResponse]
     total: int
     unread: int
     limit: int

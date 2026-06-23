@@ -1,3 +1,4 @@
+from typing import Dict, Set
 from collections import defaultdict
 from uuid import UUID
 
@@ -19,7 +20,7 @@ router = APIRouter(tags=["messages"])
 
 class ConnectionManager:
     def __init__(self) -> None:
-        self.active: dict[str, set[WebSocket]] = defaultdict(set)
+        self.active: Dict[str, Set[WebSocket]] = defaultdict(set)
 
     async def connect(self, match_id: UUID, websocket: WebSocket) -> None:
         await websocket.accept()
