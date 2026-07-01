@@ -1,0 +1,20 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background-color: #EDE9FE;
+  color: var(--primary);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable:hover {
+  background-color: var(--primary);
+  color: white;
+}

@@ -19,6 +19,7 @@ class Offer(Base):
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
+    category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     tags: Mapped[List[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(

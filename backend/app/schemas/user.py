@@ -8,6 +8,9 @@ class UserResponse(BaseModel):
     name: str
     email: str
     verified: bool
+    average_rating: float = 0.0
+    review_count: int = 0
+    badges: List[str] = []
     created_at: datetime
 
     model_config = {"from_attributes": True}

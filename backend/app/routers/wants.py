@@ -19,6 +19,7 @@ def _serialize_want(want: Want) -> SkillPostResponse:
         id=str(want.id),
         user_id=str(want.user_id),
         title=want.title,
+        category=want.category,
         tags=want.tags,
         description=want.description,
         created_at=want.created_at,
@@ -29,11 +30,17 @@ def _serialize_want(want: Want) -> SkillPostResponse:
 async def list_wants(
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
+    category: str = Query(default=None),
     db: AsyncSession = Depends(get_db),
 ):
-    count_result = await db.execute(select(func.count()).select_from(Want))
+    query = select(Want)
+    if category:
+        query = query.where(Want.category == category)
+        
+    count_result = await db.execute(select(func.count()).select_from(query.subquery()))
     total = count_result.scalar_one()
-    result = await db.execute(select(Want).order_by(Want.created_at.desc()).offset(offset).limit(limit))
+    
+    result = await db.execute(query.order_by(Want.created_at.desc()).offset(offset).limit(limit))
     return PaginatedSkillPostsResponse(
         items=[_serialize_want(want) for want in result.scalars().all()],
         total=total,
@@ -51,6 +58,7 @@ async def create_want(
     want = Want(
         user_id=current_user.id,
         title=body.title,
+        category=body.category,
         tags=body.tags,
         description=body.description,
     )

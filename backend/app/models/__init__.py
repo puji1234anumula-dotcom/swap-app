@@ -6,5 +6,6 @@ from app.models.message import Message
 from app.models.review import Review
 from app.models.report import Report
 from app.models.notification import Notification
+from app.models.schedule import Schedule
 
-__all__ = ["User", "Offer", "Want", "Match", "Message", "Review", "Report", "Notification"]
+__all__ = ["User", "Offer", "Want", "Match", "Message", "Review", "Report", "Notification", "Schedule"]

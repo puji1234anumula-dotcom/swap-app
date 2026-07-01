@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     DATABASE_URL_SYNC: str
     JWT_SECRET: str
     JWT_EXPIRY_DAYS: int = 7
-    CORS_ORIGINS: str = "http://localhost:5173"
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:5174"
 
     @property
     def cors_origins_list(self) -> List[str]:

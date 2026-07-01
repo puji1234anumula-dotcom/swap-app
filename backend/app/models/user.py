@@ -1,4 +1,5 @@
 import uuid
+from typing import List
 from datetime import datetime, timezone
 
 from sqlalchemy import String, Boolean, DateTime, text
@@ -21,6 +22,9 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False
     )
+    average_rating: Mapped[float] = mapped_column(default=0.0, server_default="0.0")
+    review_count: Mapped[int] = mapped_column(default=0, server_default="0")
+    badges: Mapped[List[str]] = mapped_column(type_=__import__('sqlalchemy').JSON, default=list, server_default="[]")
 
     # Relationships
     offers = relationship("Offer", back_populates="user", lazy="selectin")

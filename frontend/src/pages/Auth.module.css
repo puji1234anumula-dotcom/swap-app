@@ -1,0 +1,145 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 24px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+  padding: 32px 24px 24px;
+}
+
+.logo {
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  padding: 16px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+
+.activeTab {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.form {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.inputGroup input {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+}
+
+.inputGroup input:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.error {
+  color: var(--error);
+  font-size: 14px;
+  text-align: center;
+}
+
+.submitBtn {
+  background: var(--primary);
+  color: white;
+  padding: 14px;
+  border-radius: var(--radius-input);
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 16px 24px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border);
+}
+
+.divider span {
+  padding: 0 16px;
+  font-weight: 500;
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: white;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius-input);
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 24px 32px;
+  width: calc(100% - 48px);
+}
+
+.googleBtn:hover {
+  background: var(--bg);
+}
+
+.googleIcon {
+  width: 20px;
+  height: 20px;
+}

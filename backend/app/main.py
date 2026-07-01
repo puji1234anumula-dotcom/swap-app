@@ -10,7 +10,7 @@ from slowapi.util import get_remote_address
 
 from app.exceptions import validation_exception_handler, generic_exception_handler
 from app.config import get_settings
-from app.routers import auth, matches, messages, notifications, offers, users, wants
+from app.routers import auth, matches, messages, notifications, offers, users, wants, reviews, schedules
 
 settings = get_settings()
 
@@ -35,7 +35,7 @@ app.state.limiter = limiter
 # --- CORS ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
+    allow_origins=["*"], # Allow any frontend domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -54,6 +54,8 @@ app.include_router(wants.router)
 app.include_router(matches.router)
 app.include_router(messages.router)
 app.include_router(notifications.router)
+app.include_router(reviews.router)
+app.include_router(schedules.router)
 
 
 # --- Health check ---

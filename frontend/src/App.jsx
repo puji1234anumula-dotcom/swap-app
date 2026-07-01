@@ -1,49 +1,45 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Landing from './pages/Landing';
+import Auth from './pages/Auth';
+import Dashboard from './pages/Dashboard';
+import Browse from './pages/Browse';
+import Messages from './pages/Messages';
+
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('swap_token');
+  if (!token) {
+    return <Navigate to="/auth" replace />;
+  }
+  return children;
+};
 
 function App() {
-  const [health, setHealth] = useState(null)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('http://localhost:8000/health')
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json()
-      })
-      .then(data => {
-        setHealth(data)
-        setLoading(false)
-      })
-      .catch(err => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [])
-
   return (
-    <div className="app">
-      <h1>Swap</h1>
-      <p className="subtitle">Skill-trading platform</p>
-
-      <div className="card">
-        <h2>Backend Connection</h2>
-        {loading && <p className="status loading">Connecting to backend...</p>}
-        {error && (
-          <p className="status error">
-            Failed to connect: {error}
-          </p>
-        )}
-        {health && (
-          <div className="status success">
-            <p>Connected to backend!</p>
-            <pre>{JSON.stringify(health, null, 2)}</pre>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/browse" element={
+        <ProtectedRoute>
+          <Browse />
+        </ProtectedRoute>
+      } />
+      <Route path="/messages" element={
+        <ProtectedRoute>
+          <Messages />
+        </ProtectedRoute>
+      } />
+      <Route path="/messages/:matchId" element={
+        <ProtectedRoute>
+          <Messages />
+        </ProtectedRoute>
+      } />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

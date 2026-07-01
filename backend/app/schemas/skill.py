@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, field_validator
 
 class SkillPostBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
+    category: Optional[str] = Field(default=None, max_length=100)
     tags: List[str] = Field(..., min_length=1, max_length=20)
     description: Optional[str] = Field(default=None, max_length=2000)
 
@@ -32,6 +33,7 @@ class SkillPostCreate(SkillPostBase):
 
 class SkillPostUpdate(BaseModel):
     title: Optional[str] = Field(default=None, min_length=1, max_length=200)
+    category: Optional[str] = Field(default=None, max_length=100)
     tags: Optional[List[str]] = Field(default=None, min_length=1, max_length=20)
     description: Optional[str] = Field(default=None, max_length=2000)
 
@@ -47,6 +49,7 @@ class SkillPostResponse(BaseModel):
     id: str
     user_id: str
     title: str
+    category: Optional[str] = None
     tags: List[str]
     description: Optional[str]
     created_at: datetime

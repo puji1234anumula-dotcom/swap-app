@@ -19,6 +19,7 @@ def _serialize_offer(offer: Offer) -> SkillPostResponse:
         id=str(offer.id),
         user_id=str(offer.user_id),
         title=offer.title,
+        category=offer.category,
         tags=offer.tags,
         description=offer.description,
         created_at=offer.created_at,
@@ -29,11 +30,17 @@ def _serialize_offer(offer: Offer) -> SkillPostResponse:
 async def list_offers(
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
+    category: str = Query(default=None),
     db: AsyncSession = Depends(get_db),
 ):
-    count_result = await db.execute(select(func.count()).select_from(Offer))
+    query = select(Offer)
+    if category:
+        query = query.where(Offer.category == category)
+        
+    count_result = await db.execute(select(func.count()).select_from(query.subquery()))
     total = count_result.scalar_one()
-    result = await db.execute(select(Offer).order_by(Offer.created_at.desc()).offset(offset).limit(limit))
+    
+    result = await db.execute(query.order_by(Offer.created_at.desc()).offset(offset).limit(limit))
     return PaginatedSkillPostsResponse(
         items=[_serialize_offer(offer) for offer in result.scalars().all()],
         total=total,
@@ -51,6 +58,7 @@ async def create_offer(
     offer = Offer(
         user_id=current_user.id,
         title=body.title,
+        category=body.category,
         tags=body.tags,
         description=body.description,
     )
