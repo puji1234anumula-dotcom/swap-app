@@ -24,7 +24,7 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 def get_url():
-    return get_settings().DATABASE_URL_SYNC
+    return get_settings().sync_database_url
 
 
 

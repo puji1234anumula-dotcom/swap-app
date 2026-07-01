@@ -12,3 +12,4 @@ python-jose[cryptography]
 slowapi
 email-validator
 google-auth
+requests
