@@ -2,6 +2,7 @@ services:
   - type: web
     name: swap-backend
     env: python
+    plan: free
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -19,3 +20,4 @@ databases:
   - name: swap-db
     databaseName: swap
     user: swap_user
+    plan: free
