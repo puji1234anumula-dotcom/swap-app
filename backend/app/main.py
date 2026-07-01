@@ -65,6 +65,17 @@ async def health_check():
     return {"status": "healthy", "app": "Swap", "version": "0.1.0"}
 
 
+@app.get("/db-health", tags=["health"])
+async def db_health_check(db: AsyncSession = Depends(get_db)):
+    """Diagnose database connection issues directly."""
+    from sqlalchemy import text
+    try:
+        await db.execute(text("SELECT 1"))
+        return {"status": "success", "message": "Database connected perfectly!"}
+    except Exception as e:
+        return {"status": "error", "message": str(e), "type": str(type(e))}
+
+
 @app.get("/", tags=["root"])
 async def root():
     """Root endpoint."""
