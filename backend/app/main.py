@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Depends
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,7 +11,8 @@ from slowapi.util import get_remote_address
 from app.exceptions import validation_exception_handler, generic_exception_handler
 from app.config import get_settings
 from app.routers import auth, matches, messages, notifications, offers, users, wants, reviews, schedules
-
+from app.database import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
 settings = get_settings()
 
 # Configure logging
