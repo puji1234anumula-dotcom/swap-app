@@ -3,9 +3,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDH66hqWrur0Qx8lRl101QS6nCMot41x6M",
-  // ✅ Use our own domain as authDomain so Firebase redirect can read back session
-  // Vercel proxies /__/auth/* → https://swap-29f1e.firebaseapp.com/__/auth/*
-  authDomain: "swap-app-delta.vercel.app",
+  authDomain: "swap-29f1e.firebaseapp.com", // original authDomain
   projectId: "swap-29f1e",
   storageBucket: "swap-29f1e.firebasestorage.app",
   messagingSenderId: "431994282477",
