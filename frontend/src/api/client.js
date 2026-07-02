@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  timeout: 60000, // 60s — handles Render free tier cold start (30-60s spin-up)
 });
 
 client.interceptors.request.use((config) => {

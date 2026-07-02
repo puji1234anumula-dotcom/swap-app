@@ -9,16 +9,20 @@ import styles from './Auth.module.css';
 export default function Auth() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(true); // start true while checking redirect result
+  const [loading, setLoading] = useState(true);
+  const [wakingUp, setWakingUp] = useState(false); // shown when backend is cold-starting
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
-  // ✅ On every page load, check if the user just returned from Google redirect
+  // On every page load, check if the user just returned from Google redirect
   useEffect(() => {
+    // Show "waking up" after 3s if backend is still cold-starting
+    const wakeTimer = setTimeout(() => setWakingUp(true), 3000);
+
     getRedirectResult(auth)
       .then(async (result) => {
         if (result && result.user) {
-          // User came back from Google redirect — exchange token with backend
+          setWakingUp(true); // backend call is about to happen, may take time
           const idToken = await result.user.getIdToken();
           const data = await loginWithGoogle(idToken);
           localStorage.setItem('swap_token', data.access_token);
@@ -27,14 +31,22 @@ export default function Auth() {
       })
       .catch((err) => {
         console.error('Google Redirect Result Error:', err.code, err.message);
-        // Only show error if it's a real auth failure, not just "no redirect in progress"
         if (err.code && err.code !== 'auth/no-auth-event') {
-          setError(err.response?.data?.detail || err.message || 'Google Sign-In failed. Please try again.');
+          const msg = err.response?.data?.detail || err.message || '';
+          if (msg.toLowerCase().includes('network') || !err.response) {
+            setError('Server is waking up — please wait 30 seconds and try again.');
+          } else {
+            setError(msg || 'Google Sign-In failed. Please try again.');
+          }
         }
       })
       .finally(() => {
-        setLoading(false); // page is ready to show form
+        clearTimeout(wakeTimer);
+        setWakingUp(false);
+        setLoading(false);
       });
+
+    return () => clearTimeout(wakeTimer);
   }, [navigate]);
 
   const handleChange = (e) => {
@@ -46,6 +58,8 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    // Show waking up after 3s if backend is cold-starting
+    const wakeTimer = setTimeout(() => setWakingUp(true), 3000);
     try {
       let data;
       if (isLogin) {
@@ -56,8 +70,15 @@ export default function Auth() {
       localStorage.setItem('swap_token', data.access_token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.detail || 'An error occurred. Please try again.');
+      const msg = err.response?.data?.detail || err.message || '';
+      if (!err.response) {
+        setError('Server is waking up — please wait 30 seconds and try again.');
+      } else {
+        setError(msg || 'An error occurred. Please try again.');
+      }
     } finally {
+      clearTimeout(wakeTimer);
+      setWakingUp(false);
       setLoading(false);
     }
   };
@@ -117,6 +138,11 @@ export default function Auth() {
             <input type="password" name="password" required minLength="8" value={formData.password} onChange={handleChange} />
           </div>
 
+          {wakingUp && !error && (
+            <div className={styles.error} style={{color: '#f59e0b'}}>
+              ⏳ Waking up server... please wait ~30 seconds
+            </div>
+          )}
           {error && <div className={styles.error}>{error}</div>}
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
