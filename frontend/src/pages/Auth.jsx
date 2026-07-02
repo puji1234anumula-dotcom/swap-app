@@ -2,42 +2,39 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, signup, loginWithGoogle } from '../api/auth';
 import { auth, googleProvider } from '../firebase';
-import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import LoadingSpinner from '../components/LoadingSpinner';
 import styles from './Auth.module.css';
 
 export default function Auth() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // start true while checking redirect result
   const [error, setError] = useState('');
-
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
 
-  // ✅ FIX: Handle redirect result when user is returned back to the page
+  // ✅ On every page load, check if the user just returned from Google redirect
   useEffect(() => {
-    const handleRedirectResult = async () => {
-      try {
-        setLoading(true);
-        const result = await getRedirectResult(auth);
-        if (result) {
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result && result.user) {
+          // User came back from Google redirect — exchange token with backend
           const idToken = await result.user.getIdToken();
           const data = await loginWithGoogle(idToken);
           localStorage.setItem('swap_token', data.access_token);
           navigate('/dashboard');
         }
-      } catch (err) {
-        console.error('Google Redirect Result Error:', err);
-        if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
-          const detail = err.response?.data?.detail || err.message || 'Google Sign-In failed.';
-          setError(detail);
+      })
+      .catch((err) => {
+        console.error('Google Redirect Result Error:', err.code, err.message);
+        // Only show error if it's a real auth failure, not just "no redirect in progress"
+        if (err.code && err.code !== 'auth/no-auth-event') {
+          setError(err.response?.data?.detail || err.message || 'Google Sign-In failed. Please try again.');
         }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    handleRedirectResult();
+      })
+      .finally(() => {
+        setLoading(false); // page is ready to show form
+      });
   }, [navigate]);
 
   const handleChange = (e) => {
@@ -49,7 +46,6 @@ export default function Auth() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
     try {
       let data;
       if (isLogin) {
@@ -66,39 +62,16 @@ export default function Auth() {
     }
   };
 
+  // ✅ Use redirect flow directly — no popup (popup is broken by COOP on Google's end)
   const handleGoogleSignIn = async () => {
     setError('');
+    setLoading(true);
     try {
-      // ✅ FIX: Try popup first; if blocked by browser COOP policy, fall back to redirect
-      const result = await signInWithPopup(auth, googleProvider);
-      setLoading(true);
-      const idToken = await result.user.getIdToken();
-      const data = await loginWithGoogle(idToken);
-      localStorage.setItem('swap_token', data.access_token);
-      navigate('/dashboard');
+      await signInWithRedirect(auth, googleProvider);
+      // Page will navigate away; when it comes back, useEffect above handles the result
     } catch (err) {
-      console.error('Google Sign-In Error (popup):', err.code, err.message);
-
-      // ✅ FIX: If popup fails due to COOP/browser policy, fall back to redirect flow
-      if (
-        err.code === 'auth/popup-blocked' ||
-        err.code === 'auth/popup-closed-by-user' ||
-        err.code === 'auth/cancelled-popup-request' ||
-        err.message?.includes('Cross-Origin') ||
-        err.message?.includes('network') ||
-        err.code === 'auth/network-request-failed'
-      ) {
-        try {
-          // Redirect flow: user leaves the page and comes back; result is handled in useEffect
-          await signInWithRedirect(auth, googleProvider);
-        } catch (redirectErr) {
-          console.error('Google Sign-In Error (redirect):', redirectErr);
-          setError('Google Sign-In failed. Please try again.');
-        }
-      } else {
-        setError(err.response?.data?.detail || err.message || 'Google Sign-In failed.');
-      }
-    } finally {
+      console.error('Google Sign-In Error:', err.code, err.message);
+      setError(err.message || 'Google Sign-In failed. Please try again.');
       setLoading(false);
     }
   };
@@ -112,17 +85,17 @@ export default function Auth() {
         </div>
 
         <div className={styles.tabs}>
-          <button 
+          <button
             type="button"
             className={`${styles.tab} ${!isLogin ? styles.activeTab : ''}`}
-            onClick={() => setIsLogin(false)}
+            onClick={() => { setIsLogin(false); setError(''); }}
           >
             Sign Up
           </button>
-          <button 
+          <button
             type="button"
             className={`${styles.tab} ${isLogin ? styles.activeTab : ''}`}
-            onClick={() => setIsLogin(true)}
+            onClick={() => { setIsLogin(true); setError(''); }}
           >
             Log In
           </button>
@@ -155,9 +128,9 @@ export default function Auth() {
           <span>OR</span>
         </div>
 
-        <button 
-          type="button" 
-          className={styles.googleBtn} 
+        <button
+          type="button"
+          className={styles.googleBtn}
           onClick={handleGoogleSignIn}
           disabled={loading}
         >
