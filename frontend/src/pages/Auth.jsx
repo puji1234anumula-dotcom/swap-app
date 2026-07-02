@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login, signup, loginWithGoogle } from '../api/auth';
 import { auth, googleProvider } from '../firebase';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import LoadingSpinner from '../components/LoadingSpinner';
 import styles from './Auth.module.css';
 
@@ -13,6 +13,32 @@ export default function Auth() {
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+
+  // ✅ FIX: Handle redirect result when user is returned back to the page
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        setLoading(true);
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const idToken = await result.user.getIdToken();
+          const data = await loginWithGoogle(idToken);
+          localStorage.setItem('swap_token', data.access_token);
+          navigate('/dashboard');
+        }
+      } catch (err) {
+        console.error('Google Redirect Result Error:', err);
+        if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+          const detail = err.response?.data?.detail || err.message || 'Google Sign-In failed.';
+          setError(detail);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleRedirectResult();
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,17 +69,33 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setError('');
     try {
-      // Trigger popup immediately before any state updates so browsers don't block it
+      // ✅ FIX: Try popup first; if blocked by browser COOP policy, fall back to redirect
       const result = await signInWithPopup(auth, googleProvider);
       setLoading(true);
-      
       const idToken = await result.user.getIdToken();
       const data = await loginWithGoogle(idToken);
       localStorage.setItem('swap_token', data.access_token);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Google Sign-In Error:', err);
-      if (err.code !== 'auth/popup-closed-by-user') {
+      console.error('Google Sign-In Error (popup):', err.code, err.message);
+
+      // ✅ FIX: If popup fails due to COOP/browser policy, fall back to redirect flow
+      if (
+        err.code === 'auth/popup-blocked' ||
+        err.code === 'auth/popup-closed-by-user' ||
+        err.code === 'auth/cancelled-popup-request' ||
+        err.message?.includes('Cross-Origin') ||
+        err.message?.includes('network') ||
+        err.code === 'auth/network-request-failed'
+      ) {
+        try {
+          // Redirect flow: user leaves the page and comes back; result is handled in useEffect
+          await signInWithRedirect(auth, googleProvider);
+        } catch (redirectErr) {
+          console.error('Google Sign-In Error (redirect):', redirectErr);
+          setError('Google Sign-In failed. Please try again.');
+        }
+      } else {
         setError(err.response?.data?.detail || err.message || 'Google Sign-In failed.');
       }
     } finally {
